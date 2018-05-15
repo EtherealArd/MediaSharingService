@@ -1,0 +1,45 @@
+﻿@model CloudAsp.Models.Authorisation
+<script>
+    function authorisationComplite(rezult) {
+        debugger;
+        var json = rezult.responseJSON;
+        if (json.url) {
+            window.location.href = json.url;
+        }
+        if (json.errorText) {
+            $("#authorisationRezult").html("<h3>" + json.errorText + "<h3>");
+        }
+        
+    }
+</script>
+<div>
+    <p id="authorisationRezult" class="bg-warning"></p>
+</div>
+@using (Ajax.BeginForm("Authorisation", "Client", new AjaxOptions {OnComplete = "authorisationComplite"}))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @*<div class="form-horizontal">*@
+    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+    <div class="row">
+        <div class="input-group col-lg-offset-3">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            @Html.EditorFor(model => model.Login, new { htmlAttributes = new { @class = "form-control col-md-10", placeholder = "Email" } })
+            @Html.ValidationMessageFor(model => model.Login, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="input-group col-lg-offset-3">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "Password" } })
+            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    @*</div>*@
+    <br/>
+
+    <div class="form-group">
+        <div class="col-md-offset-5">
+            <input type="submit" value="Авторизуватись" class="btn btn-primary"/>
+        </div>
+    </div>
+}

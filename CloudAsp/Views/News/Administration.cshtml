@@ -1,0 +1,57 @@
+﻿@model IEnumerable<CloudAspData.Entity.News>
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-lg-offset-5">
+            <h2>Новини</h2>
+        </div>
+        <div class="col-lg-offset-1 col-lg-2">
+            <button class="btn btn-default">@Html.ActionLink("Створити новину", "Create")</button>
+        </div>
+    </div>
+    <div class="row">
+
+        @if (Model != null)
+        {
+            foreach (var news in Model)
+            {
+                <div class="col-lg-6 well well-sm">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                @if (news.Image == null)
+                                {
+                                    <img src="~/Resourses/Image/news.png" class="img-rounded img-thumbnail"/>
+                                }
+                                else
+                                {
+                                    @Html.Raw("<img class=\"img-rounded img-thumbnail\" src=\"data:image/jpeg;base64,"
+                                              + Convert.ToBase64String(news.Image) + "\" alt=\"" + news.Text + "\"/>")
+                                }
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">Caption</label>
+                                <div>
+                                    <span class="label label-info">@news.Caption</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="comment">Текст</label>
+                                <textarea readonly="readonly" class="form-control" rows="7" id="comment" placeholder="Текст події">@news.Text</textarea>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary">@Html.ActionLink("Змінити", "Edit", "News", new { id = news.Id }, new { @class = "btn-action" })</button>
+                                <button class="btn btn-danger">@Html.ActionLink("Видалити", "Delete", "News", new { id = news.Id }, new { @class = "btn-action" })</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

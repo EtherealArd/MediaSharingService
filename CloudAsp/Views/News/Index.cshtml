@@ -1,0 +1,10 @@
+﻿@model CloudAsp.Models.News.NewsModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container">
+    <div id="news">
+        @Html.Partial("GetNews", Model)
+    </div>
+</div>

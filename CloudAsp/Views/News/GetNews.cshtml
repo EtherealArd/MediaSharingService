@@ -1,0 +1,40 @@
+﻿@using CloudAsp.Helpers
+@model CloudAsp.Models.News.NewsModel
+@{
+    Layout = null;
+}
+<style>
+    .imageNews {
+        margin: 10px;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        @if (Model != null)
+        {
+            for (int i = 0; i < Model.News.Count; i++)
+            {
+                var styleType = i % 2 == 0 ? "pull-left" : "pull-right";
+                <div class="col-lg-12">
+
+                    @if (Model.News[i].Image == null)
+                    {
+                        <img src="~/Resourses/Image/news.png" width="350" class="img-thumbnail imageNews @styleType" />
+                    }
+                    else
+                    {
+                        @Html.Raw("<img id=\"" + Model.News[i].Id + "\" class=\"img-thumbnail imageNews " + styleType + "\" src=\"data:image/jpeg;base64,"
+                                  + Convert.ToBase64String(Model.News[i].Image) + "\" width=\"350\" />")
+                    }
+                    <h2 class="featurette-heading">@Model.News[i].Caption</h2>
+                    <p class="lead">@Model.News[i].Text</p>
+                </div>
+                <br/>
+                <hr class="featurette-divider col-lg-12">
+            }
+            <div class="btn-group btn-paging col-lg-offset-5">
+                @Html.PageLinks(Model?.PageInfo, "GetNews", x => new { index = x }, Ajax, new AjaxOptions { UpdateTargetId = "news" })
+            </div>
+        }
+    </div>
+</div>

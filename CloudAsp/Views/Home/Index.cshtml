@@ -1,0 +1,191 @@
+﻿
+@model CloudAsp.Models.Cloud.CloudModel 
+@{
+    ViewBag.Title = "Хмара";
+    var s = Request.Url?.Scheme + "://" + Request.Url?.Authority + Url.Action("Index", "Home", new {id = Model.Id.ToString()});
+}
+<script>
+    function ElementsIsUnique(files) {
+
+        var filesByRoom = document.getElementsByClassName("fineName");
+
+        for (var i = 0; i < files.length; i++) {
+            for (var j = 0; j < filesByRoom.length; j++) {
+                if (files[i].name == filesByRoom[j].innerHTML) {
+                    alert("Елемент з назвою: " + files[i].name + " вже присутній");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    
+
+    function uploadFileToServer(files) {
+        
+        if (!ElementsIsUnique(files))
+            return;
+        ShowLoadElem();
+        var data = new FormData();
+
+        for (var i = 0; i < files.length; i++) {
+            data.append("file" + i, files[i]);
+        }
+        
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("UploadFile", "Home", new { roomId = $"{Model.Id}"} )',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (result) {
+                debugger;
+                var container = document.getElementById("filesList");
+                container.innerHTML = result;
+                HideLoadElem();
+
+            },
+            error: function (xhr, status, p3) {
+                HideLoadElem();   
+                alert(xhr.responseText);
+            }
+        });
+    }
+
+    function onChangeFile() {
+        debugger;
+        var files = document.getElementById("inputFile").files;
+        
+        if (files.length > 0) {
+            uploadFileToServer(files);
+            document.getElementById("inputFile").value = "";
+        }
+    }
+
+    function drop_handler(ev) {
+        
+        console.log("Drop");
+        ev.preventDefault();
+        // If dropped items aren't files, reject them
+        var dt = ev.dataTransfer;
+        var files = [];
+        debugger;
+        if (dt.items) {
+            // Use DataTransferItemList interface to access the file(s)
+            for (var i=0; i < dt.items.length; i++) {
+                if (dt.items[i].kind == "file") {
+                    var f = dt.items[i].getAsFile();
+                    files.push(f);
+                }
+            }
+            if(files.length > 0)
+                uploadFileToServer(files);
+        } else {
+            // Use DataTransfer interface to access the file(s)
+            for (var i=0; i < dt.files.length; i++) {
+                console.log("... file[" + i + "].name = " + dt.files[i].name);
+            }  
+        }
+    }
+    function dragover_handler(ev) {
+        console.log("dragOver");
+        // Prevent default select and drag behavior
+        ev.preventDefault();
+    }
+    function dragend_handler(ev) {
+        console.log("dragEnd");
+        // Remove all of the drag data
+        var dt = ev.dataTransfer;
+        if (dt.items) {
+            // Use DataTransferItemList interface to remove the drag data
+            for (var i = 0; i < dt.items.length; i++) {
+                dt.items.remove(i);
+            }
+        } else {
+            // Use DataTransfer interface to remove the drag data
+            ev.dataTransfer.clearData();
+        }
+    }
+    function ShowLoadElem() {
+        var loadElem = document.getElementById("loadElem");
+        loadElem.classList.remove('hide');
+        document.getElementById("mainForm").classList.add("startLoad");
+        var nodes = document.getElementById("mainForm").getElementsByTagName('*');
+        for (var i = 0; i < nodes.length; i++) {
+            nodes[i].disabled = true;
+        }
+    }
+
+    function HideLoadElem() {
+        document.getElementById("loadElem").classList.add("hide");
+        document.getElementById("mainForm").classList.remove("startLoad");
+        var nodes = document.getElementById("mainForm").getElementsByTagName('*');
+        for (var i = 0; i < nodes.length; i++) {
+            nodes[i].disabled = false;
+        }
+    }
+</script>
+<div id="loadElem" class="container hide" >
+    <div class="row">
+        <h2>Create your snippet's HTML, CSS and Javascript in the editor tabs</h2>
+        <div id="loading">
+            <ul class="bokeh">
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="containerBorder">
+        <form id="mainForm">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i>Посилання</span>
+                        <input type="text" class="form-control" placeholder="Посилання" value="@s" />
+                    </div>
+                </div>
+                @*<hr />*@
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i>Термін зберігання</span>
+                        @Html.EnumDropDownListFor(
+                            x => x.DaysRemove,
+                            new { @class = "form-control" })
+                    </div>
+                </div>
+                @*<hr />*@
+                <div class=" col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                    
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i>Виберіть файли</span>
+                        <input id="inputFile" multiple type="file" class="form-control btn btn-primary" onchange="onChangeFile()" />
+                    </div>
+                </div>
+                @*<hr />*@
+                <div class="orElement">
+                    <h3>Чи</h3>
+                </div>
+                <div class="panel panel-default dragAndDropContainer">
+                    <div class="panel-heading">
+                        Drag And Drop
+                    </div>
+                    <div class="panel-body">
+                        <div id="drop_zone" class="dragAndDropPanel" ondrop="drop_handler(event);" ondragover="dragover_handler(event);" ondragend="dragend_handler(event);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div id="filesList" class="row">
+            @if (Model.Files != null && Model.Files.Count != 0)
+            {
+                @Html.Partial("Files", Model.Files.ToArray())
+            }
+        </div>
+    </div>
+</div>

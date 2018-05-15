@@ -1,0 +1,10 @@
+D:\CloudAsp\CloudAspData\bin\Debug\CloudAspData.dll.config
+D:\CloudAsp\CloudAspData\bin\Debug\CloudAspData.dll
+D:\CloudAsp\CloudAspData\bin\Debug\CloudAspData.pdb
+D:\CloudAsp\CloudAspData\bin\Debug\EntityFramework.dll
+D:\CloudAsp\CloudAspData\bin\Debug\EntityFramework.SqlServer.dll
+D:\CloudAsp\CloudAspData\bin\Debug\EntityFramework.xml
+D:\CloudAsp\CloudAspData\bin\Debug\EntityFramework.SqlServer.xml
+D:\CloudAsp\CloudAspData\obj\Debug\CloudAspData.dll
+D:\CloudAsp\CloudAspData\obj\Debug\CloudAspData.pdb
+D:\CloudAsp\CloudAspData\obj\Debug\CloudAspData.csprojResolveAssemblyReference.cache

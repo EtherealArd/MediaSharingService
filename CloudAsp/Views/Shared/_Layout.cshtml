@@ -1,0 +1,83 @@
+﻿@using CloudAsp.Helpers
+@using CloudAsp.Models
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span> 
+            </button>
+            <a class="navbar-brand" href="@Url.Action("Index","Home")">Azazazazaza</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li>@Html.ActionLink("Новини", "Index", "News")</li>
+                <li>@Html.ActionLink("Хмара", "Index", "Home")</li>
+                <ul class="nav navbar-nav navbar-right">
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span><span class="userText"> @Html.GetUser(User.Identity.Name)</span><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Профіль</a></li>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li>@Html.ActionLink("Новини", "Administration", "News")</li>
+                                }
+                                <li>@Html.ActionLink("Вийти", "ExitUser", "Client")</li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a href="@Url.Action("Create","Client")"><span class="glyphicon glyphicon-user"></span>Реєстрація</a></li>
+                        <li><a data-toggle="modal" data-target="#myModal" ui-sref="login"><span class="glyphicon glyphicon-log-in"></span>Авторизуватись</a></li>
+                    }
+                </ul>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    @Html.Partial("~/Views/Client/Authorisation.cshtml", new Authorisation())
+                </div>
+            </div>
+
+        </div>
+    </div>       
+</div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year – приложение ASP.NET</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+        <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+</body>
+</html>

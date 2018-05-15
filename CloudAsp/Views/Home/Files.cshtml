@@ -1,0 +1,109 @@
+﻿@using CloudAspData.Entity
+@model IEnumerable<CloudAspData.Entity.File>
+@{
+    Layout = null;
+}
+<style>
+    .elem-work {
+        margin: 0;
+        padding: 2px 3px 2px 3px;
+    }
+    .elem-work a {
+        color: white;
+    }
+</style>
+<script>
+    function removeFile(fileId, roomId) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("RemoveFile", "Home")' + "?id = " + fileId + "&roomId = " + roomId,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                debugger;
+                var container = document.getElementById("filesList");
+                container.innerHTML = result;
+            },
+            error: function (xhr, status, p3) {
+                alert(xhr.responseText);
+            }
+        });
+    }
+</script>
+<div class="row files-container">
+    @foreach (var file in Model)
+    {
+        var path = string.Empty;
+        var size = "col-sm-3";
+        if (file.FileType == FileType.Rar)
+        {
+            path = "/Resourses/Image/rar.png";
+        }
+        else if (file.FileType == FileType.Doc)
+        {
+            path = "/Resourses/Image/rar.png";
+        }
+        else if (file.FileType == FileType.Mp3)
+        {
+            size = "col-sm-6";
+        }
+        else if (file.FileType == FileType.Mp4)
+        {
+            size = "col-sm-6";
+        }
+        else if (file.FileType == FileType.Other)
+        {
+            path = "/Resourses/Image/rar.png";
+        }
+        <div class="@size">
+            <div class="panel panel-default">
+                <div class="panel-heading" >
+                    @if (file.FileType == FileType.Image)
+                    {
+                        @Html.Raw("<img class=\"img-thumbnail elemMaxSize\" src=\"data:image/jpeg;base64,"
+                                  + Convert.ToBase64String(file.FileBytes) + "\" />")
+                    }
+                    else if (file.FileType == FileType.Mp3)
+                    {
+                        <audio controls>
+                            <source src="@Url.Action("PlayFile", "Home", new {id = file.Id.ToString(), format = "audio / mp3"})" type="audio/mp3" class="elemMaxSize"/>
+                            <p>Your browser does not support HTML 5 audio element</p>
+                        </audio>
+                    }
+                    else if (file.FileType == FileType.Mp4)
+                    {
+                        <video controls class="videoelem">
+                            <source src="@Url.Action("PlayFile", "Home", new {id = file.Id.ToString(), format = "video/mp4"})" type="video/mp4"/>
+                        </video>
+                    }
+                    else
+                    {
+                        <img src="@path" class="imageType thumbnail"/>
+                    }
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <h5 class="fineName">@file.Name</h5>
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-primary elem-work">
+                                <a href="@Url.Action("DownloadFile", "Home", new {id = file.Id.ToString()})">
+                                    <span class="glyphicon glyphicon-arrow-down"></span>
+                                </a>
+                            </button>
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-primary elem-work" onclick="removeFile('@file.Id.ToString()', '@file.RoomId.ToString()')">
+                                
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
